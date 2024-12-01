@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciar Permissões</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="min-h-screen bg-gray-100 flex items-center justify-center">
+  <div class="bg-white shadow-lg rounded-lg p-8 max-w-lg w-full">
+    <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">Gerenciar Permissões</h1>
+
+    <!-- Adicionar Permissão -->
+    <div class="mb-6">
+      <h2 class="text-lg font-medium text-gray-700 mb-4">Adicionar Permissão</h2>
+      <div class="mb-4">
+        <label for="add-user" class="block text-gray-700 font-medium mb-1">Usuário:</label>
+        <select id="add-user" 
+          class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+          <% users.forEach(user => { %>
+            <option value="<%= user.id %>"><%= user.name %> (<%= user.role %>)</option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label for="add-module" class="block text-gray-700 font-medium mb-1">Módulo:</label>
+        <select id="add-module" 
+          class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+          <% modules.forEach(module => { %>
+            <option value="<%= module.id %>"><%= module.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      <button id="add-permission-btn" 
+        class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg">
+        Adicionar Permissão
+      </button>
+    </div>
+
+    <!-- Revogar Permissão -->
+    <div>
+      <h2 class="text-lg font-medium text-gray-700 mb-4">Revogar Permissão</h2>
+      <div class="mb-4">
+        <label for="revoke-user" class="block text-gray-700 font-medium mb-1">Usuário:</label>
+        <select id="revoke-user" 
+          class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+          <% users.forEach(user => { %>
+            <option value="<%= user.id %>"><%= user.name %> (<%= user.role %>)</option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label for="revoke-module" class="block text-gray-700 font-medium mb-1">Módulo:</label>
+        <select id="revoke-module" 
+          class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+          <% modules.forEach(module => { %>
+            <option value="<%= module.id %>"><%= module.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      <button id="revoke-permission-btn" 
+        class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg">
+        Revogar Permissão
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Função genérica para realizar POST
+    async function postData(url = '', data = {}) {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      return response.json();
+    }
+  
+    // Adicionar Permissão
+    document.getElementById('add-permission-btn').addEventListener('click', async () => {
+      const userId = parseInt(document.getElementById('add-user').value, 10); // Converter para número
+      const moduleId = parseInt(document.getElementById('add-module').value, 10); // Converter para número
+  
+      if (isNaN(userId) || isNaN(moduleId)) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro',
+          text: 'Selecione um usuário e um módulo válidos.',
+        });
+        return;
+      }
+  
+      const data = { userId, moduleId };
+      console.log('Enviando dados para adicionar permissão:', data);
+  
+      try {
+        const result = await postData('/permissions/add', data);
+        console.log('Resposta do servidor (Adicionar Permissão):', result);
+  
+        Swal.fire({
+          icon: result.status === 'success' ? 'success' : 'error',
+          title: result.status === 'success' ? 'Sucesso' : 'Erro',
+          text: result.message,
+        });
+      } catch (error) {
+        console.error('Erro ao adicionar permissão:', error);
+      }
+    });
+  
+    // Revogar Permissão
+    document.getElementById('revoke-permission-btn').addEventListener('click', async () => {
+      const userId = parseInt(document.getElementById('revoke-user').value, 10); // Converter para número
+      const moduleId = parseInt(document.getElementById('revoke-module').value, 10); // Converter para número
+  
+      if (isNaN(userId) || isNaN(moduleId)) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro',
+          text: 'Selecione um usuário e um módulo válidos.',
+        });
+        return;
+      }
+  
+      const data = { userId, moduleId };
+      console.log('Enviando dados para revogar permissão:', data);
+  
+      try {
+        const result = await postData('/permissions/revoke', data);
+        console.log('Resposta do servidor (Revogar Permissão):', result);
+  
+        Swal.fire({
+          icon: result.status === 'success' ? 'success' : 'error',
+          title: result.status === 'success' ? 'Sucesso' : 'Erro',
+          text: result.message,
+        });
+      } catch (error) {
+        console.error('Erro ao revogar permissão:', error);
+      }
+    });
+  </script>
+  
+</body>
+</html>

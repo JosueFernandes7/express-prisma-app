@@ -4,11 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bem-vindo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>Bem-vindo, <%= user.name %>!</h1>
-  <p>Seu e-mail: <%= user.email %></p>
-  <p>Seu papel: <%= user.role %></p>
-  <a href="/auth/logout">Sair</a>
+<body class="min-h-screen bg-gray-100 flex items-center justify-center">
+  <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full text-center">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4">Bem-vindo, <%= user.name %>!</h1>
+    <p class="text-gray-600 mb-2">Seu e-mail: <span class="font-medium text-gray-700"><%= user.email %></span></p>
+    <p class="text-gray-600 mb-6">Seu papel: <span class="font-medium text-gray-700"><%= user.role %></span></p>
+    <% if (user.role === 'ADMIN' || user.role === 'SUPERUSER') { %>
+      <a href="/users/create" class="block bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mb-4">
+        Criar Novo Usuário
+      </a>
+      <a href="/permissions" class="block bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg mb-4">
+        Gerenciar Permissões
+      </a>      
+    <% } %>
+    <a href="/auth/logout" class="inline-block bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg">
+      Sair
+    </a>
+  </div>
 </body>
 </html>

@@ -3,6 +3,8 @@ import session from "express-session";
 import path from "path";
 import homeRoutes from './routes/homeRoutes.js'
 import { authRoutes} from "./routes/authRoutes.js";
+import { userRoutes} from "./routes/userRoutes.js"
+import { permissionRoutes } from "./routes/permissionRoutes.js";
 const app = express();
 
 // Configuração de sessões
@@ -21,8 +23,13 @@ app.set("views", path.join(path.resolve(), "src", "views"));
 // Middleware para processar formulários
 app.use(express.urlencoded({ extended: true }));
 
+// Middleware para processar json
+app.use(express.json())
+
 // Rotas
 app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+app.use('/permissions', permissionRoutes)
 app.use('/', homeRoutes)
 const PORT = 3000;
 app.listen(PORT, () => {
