@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Perfil</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="min-h-screen bg-gray-100 flex items-center justify-center">
+  <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+    <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">Meu Perfil</h1>
+    <form id="profile-form" class="space-y-4">
+      <!-- Nome -->
+      <div>
+        <label for="name" class="block text-gray-700 font-medium mb-1">Nome:</label>
+        <input type="text" id="name" name="name" value="<%= user.name %>" required 
+          class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+      </div>
+      <!-- E-mail -->
+      <div>
+        <label for="email" class="block text-gray-700 font-medium mb-1">E-mail:</label>
+        <input type="email" id="email" name="email" value="<%= user.email %>" required 
+          class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+      </div>
+      <!-- Imagem -->
+      <div>
+        <label for="image" class="block text-gray-700 font-medium mb-1">Imagem de Perfil:</label>
+        <input type="file" id="image" name="image" 
+          class="block w-full text-gray-700 border border-gray-300 rounded-lg cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-white file:bg-blue-500 file:cursor-pointer hover:file:bg-blue-600">
+      </div>
+      <!-- Botão de atualização -->
+      <button type="button" id="update-profile" 
+        class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-medium">
+        Atualizar Perfil
+      </button>
+    </form>
+    <!-- Imagem de Perfil -->
+    <% if (user.image) { %>
+      <div class="mt-6 text-center">
+        <img src="/uploads/<%= user.image %>" alt="Imagem de Perfil" class="w-40 h-40 rounded-full mx-auto object-cover">
+      </div>
+    <% } %>
+  </div>
+
+  <script>
+    document.getElementById('update-profile').addEventListener('click', async () => {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const imageInput = document.getElementById('image');
+
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('email', email);
+
+      if (imageInput.files.length > 0) {
+        formData.append('image', imageInput.files[0]);
+      }
+
+      try {
+        const response = await fetch('/profile/update', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+        console.log('Resposta do servidor:', result);
+
+        if (result.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Sucesso',
+            text: result.message || 'Perfil atualizado com sucesso!',
+            timer: 5000,
+            timerProgressBar: true,
+          }).then(() => {
+            // Recarregar a página após 5 segundos
+            location.reload();
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: result.message || 'Erro ao atualizar o perfil.',
+          });
+        }
+      } catch (error) {
+        console.error('Erro na requisição:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro',
+          text: 'Erro inesperado ao atualizar o perfil.',
+        });
+      }
+    });
+  </script>
+</body>
+</html>

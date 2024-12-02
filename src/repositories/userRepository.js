@@ -39,6 +39,14 @@ class UserRepository {
     });
   }
 
+  async updateUserById(userId, updateData) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+    });
+  }
+  
+
 }
 
 export default UserRepository;

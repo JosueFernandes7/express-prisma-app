@@ -7,6 +7,14 @@ import { userRoutes } from "./routes/userRoutes.js";
 import { permissionRoutes } from "./routes/permissionRoutes.js";
 import { moduleRoutes } from "./routes/moduleRoutes.js";
 import { logRoutes } from "./routes/logRoutes.js";
+import {profileRoutes} from './routes/profileRoutes.js'
+import fs from 'fs';
+
+const uploadDir = path.join(path.resolve(), 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const app = express();
 
 // Configuração de sessões
@@ -17,6 +25,8 @@ app.use(
     saveUninitialized: true,
   })
 );
+
+app.use('/uploads', express.static(path.join(path.resolve(), 'uploads')));
 
 // Configuração do EJS para views
 app.set("view engine", "ejs");
@@ -34,6 +44,7 @@ app.use("/users", userRoutes);
 app.use("/permissions", permissionRoutes);
 app.use("/modules", moduleRoutes);
 app.use("/logs", logRoutes);
+app.use("/profile", profileRoutes);
 app.use("/", homeRoutes);
 const PORT = 3000;
 app.listen(PORT, () => {
