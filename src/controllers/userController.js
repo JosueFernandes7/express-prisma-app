@@ -24,14 +24,18 @@ class UserController {
   async createUser(req, res) {
     const { name, email, password, role } = req.body;
     const creatorRole = req.session.user.role;
-
+  
     try {
       await this.userService.createUser({ name, email, password, role }, creatorRole);
       res.redirect('/'); // Redireciona para a página inicial após criação
     } catch (err) {
-      res.render('createUser', { error: err.message });
+      res.render('createUser', {
+        role: creatorRole, // Certifica-se de passar o papel do criador
+        error: err.message,
+      });
     }
   }
+  
 }
 
 export default UserController;

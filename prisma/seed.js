@@ -1,11 +1,11 @@
-import { PrismaClient }  from'@prisma/client'
-import bcrypt  from 'bcrypt'
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function main() {
   // Verificar se o superusuário já existe
-  const superUser = await prisma.user.findUnique({
+  let superUser = await prisma.user.findUnique({
     where: { email: 'superuser@example.com' },
   });
 
@@ -13,7 +13,7 @@ async function main() {
     // Criar o superusuário
     const hashedPassword = await bcrypt.hash('superuser', 10);
 
-    await prisma.user.create({
+    superUser = await prisma.user.create({
       data: {
         name: 'superuser',
         email: 'superuser@example.com',
@@ -29,10 +29,10 @@ async function main() {
 
   // Inserir módulos fixos
   const modules = [
-    { name: 'Gestão de Usuários', description: 'Módulo de gestão de usuários' },
+    { name: 'Gestao', description: 'Módulo de gestão de usuários' },
     { name: 'Perfil', description: 'Módulo de perfil do usuário' },
     { name: 'Financeiro', description: 'Módulo financeiro' },
-    { name: 'Relatórios', description: 'Módulo de relatórios' },
+    { name: 'Relatorios', description: 'Módulo de relatórios' },
     { name: 'Produtos', description: 'Módulo de produtos' },
   ];
 
@@ -48,6 +48,31 @@ async function main() {
       console.log(`Módulo "${moduleData.name}" criado com sucesso.`);
     } else {
       console.log(`Módulo "${moduleData.name}" já existe.`);
+    }
+  }
+
+  // Garantir que o superusuário tenha permissão para todos os módulos
+  const allModules = await prisma.module.findMany();
+  for (const module of allModules) {
+    const existingPermission = await prisma.permission.findUnique({
+      where: {
+        userId_moduleId: {
+          userId: superUser.id,
+          moduleId: module.id,
+        },
+      },
+    });
+
+    if (!existingPermission) {
+      await prisma.permission.create({
+        data: {
+          userId: superUser.id,
+          moduleId: module.id,
+        },
+      });
+      console.log(`Permissão para o módulo "${module.name}" adicionada ao superusuário.`);
+    } else {
+      console.log(`Permissão para o módulo "${module.name}" já existe para o superusuário.`);
     }
   }
 }

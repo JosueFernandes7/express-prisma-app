@@ -34,7 +34,7 @@ model Module {
 
 model Permission {
   id       Int     @id @default(autoincrement())
-  user     User    @relation(fields: [userId], references: [id])
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   Int
   module   Module  @relation(fields: [moduleId], references: [id])
   moduleId Int
@@ -44,7 +44,7 @@ model Permission {
 
 model AccessLog {
   id         Int      @id @default(autoincrement())
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     Int
   url        String
   accessTime DateTime @default(now())

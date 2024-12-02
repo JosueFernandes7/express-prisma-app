@@ -40,6 +40,7 @@ class PermissionMiddleware {
 
         next(); // Permissão concedida
       } catch (err) {
+        
         await this.accessLogRepository.createAccessLog(user.id, req.originalUrl, false);
         res.render('error', { error: 'Erro ao verificar permissões: ' + err.message });
       }

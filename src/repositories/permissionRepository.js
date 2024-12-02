@@ -10,6 +10,7 @@ class PermissionRepository {
       data: { userId, moduleId },
     });
   }
+  
 
   async revokePermission(userId, moduleId) {
     return this.prisma.permission.deleteMany({

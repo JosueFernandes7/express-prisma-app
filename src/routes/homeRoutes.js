@@ -1,11 +1,14 @@
 import express from 'express';
 import SessionMiddleware from '../middlewares/sessionMiddleware.js';
+import HomeController from '../controllers/homeController.js';
 
 const router = express.Router();
+const homeController = new HomeController();
 
-router.get('/', SessionMiddleware.ensureAuthenticated, (req, res) => {
-  // Passa os dados do usuário logado para a view
-  res.render('home', { user: req.session.user });
-});
+router.get(
+  '/',
+  SessionMiddleware.ensureAuthenticated,
+  (req, res) => homeController.viewHome(req, res)
+);
 
 export default router;

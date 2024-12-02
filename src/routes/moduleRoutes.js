@@ -16,7 +16,7 @@ router.get(
 router.get(
   '/relatorios',
   SessionMiddleware.ensureAuthenticated,
-  PermissionMiddleware.ensurePermission('Relatórios'),
+  PermissionMiddleware.ensurePermission('Relatorios'),
   (req, res) => {
     res.render('module', { title: 'Módulo Relatórios' });
   }
@@ -28,6 +28,17 @@ router.get(
   PermissionMiddleware.ensurePermission('Produtos'),
   (req, res) => {
     res.render('module', { title: 'Módulo Produtos' });
+  }
+);
+
+router.get(
+  '/gestao',
+  SessionMiddleware.ensureAuthenticated,
+  PermissionMiddleware.ensurePermission('Gestao'),
+  (req, res) => {
+    console.log("AQUI");
+    
+    res.render('module', { title: 'Módulo Gestão de Usuários' });
   }
 );
 

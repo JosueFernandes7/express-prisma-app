@@ -22,6 +22,18 @@ class UserRepository {
     });
   }
 
+  async getAllUsersWithModules() {
+    return this.prisma.user.findMany({
+      include: {
+        permissions: {
+          include: {
+            module: true,
+          },
+        },
+      },
+    });
+  }
+  
   async findUserById(userId) {
     return this.prisma.user.findUnique({
       where: { id: userId },
