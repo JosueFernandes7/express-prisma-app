@@ -7,50 +7,58 @@ import { userRoutes } from "./routes/userRoutes.js";
 import { permissionRoutes } from "./routes/permissionRoutes.js";
 import { moduleRoutes } from "./routes/moduleRoutes.js";
 import { logRoutes } from "./routes/logRoutes.js";
-import {profileRoutes} from './routes/profileRoutes.js'
+import { profileRoutes } from "./routes/profileRoutes.js";
+import { settings } from "./config/settings.js";
 import logger from "./config/logger.js";
-import fs from 'fs';
+import fs from "fs";
 
-const uploadDir = path.join(path.resolve(), 'uploads');
+const uploadDir = path.join(path.resolve(), "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 const app = express();
 
-app.use((req,res,next) => {
-  logger.info(`Request: ${req.method} ${req.url}`)
-  next()
-})
-// Configuração de sessões
+app.use((req, res, next) => {
+  logger.info(`Request: ${req.method} ${req.url}`);
+  next();
+});
+
+// Session Config
 app.use(
   session({
-    secret: "minha_chave_secreta",
+    secret: settings.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
   })
 );
 
-app.use('/uploads', express.static(path.join(path.resolve(), 'uploads')));
+// Config for multer uploads
+app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
 
-// Configuração do EJS para views
+// EJS Config for views
 app.set("view engine", "ejs");
 app.set("views", path.join(path.resolve(), "src", "views"));
 
-// Middleware para processar formulários
+// Middleware forms
 app.use(express.urlencoded({ extended: true }));
 
-// Middleware para processar json
+// Middleware json
 app.use(express.json());
 
 // Rotas
+app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/permissions", permissionRoutes);
 app.use("/modules", moduleRoutes);
 app.use("/logs", logRoutes);
 app.use("/profile", profileRoutes);
-app.use("/", homeRoutes);
+
+// Middleware for not found routes
+app.use((req, res, next) => {
+  res.redirect("/");
+});
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);

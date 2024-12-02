@@ -1,7 +1,11 @@
+import bcrypt from "bcrypt";
 import UserRepository from "../repositories/userRepository.js";
 import ModuleRepository from "../repositories/moduleRepository.js";
 import PermissionRepository from "../repositories/permissionRepository.js";
-import bcrypt from "bcrypt";
+
+/**
+ * Service for user-related business logic.
+ */
 class UserService {
   constructor() {
     this.userRepository = new UserRepository();
@@ -24,15 +28,25 @@ class UserService {
       return user;
     });
   }
+
+  /**
+   * Creates a new user and assigns default permissions based on their role.
+   * @param {Object} userData - User details (name, email, password, role).
+   * @param {string} creatorRole - Role of the user creating this account.
+   * @returns {Promise<Object>} - Created user object.
+   * @throws {Error} - Throws if email is already in use or role assignment is invalid.
+   */
+
   async createUser(userData, creatorRole) {
     const { role, password, email } = userData;
 
-    // Verifica se o e-mail já está em uso
+    // Check if email is already in use
     const existingUser = await this.userRepository.findUserByEmail(email);
     if (existingUser) {
       throw new Error("O e-mail já está em uso por outro usuário.");
     }
-    // Verifica se o criador tem permissão para criar o tipo de usuário
+
+    // Validate role assignment
     if (role === "ADMIN" && creatorRole !== "SUPERUSER") {
       throw new Error("Apenas superusuários podem criar administradores.");
     }
@@ -43,16 +57,13 @@ class UserService {
       );
     }
 
-    // Criptografa a senha
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Cria o usuário com a senha criptografada
     const user = await this.userRepository.createUser({
       ...userData,
       password: hashedPassword,
     });
 
-    // Atribui permissões automáticas
+    // Assign permissions
     if (role === "ADMIN") {
       const allModules = await this.moduleRepository.getAllModules();
       for (const module of allModules) {
