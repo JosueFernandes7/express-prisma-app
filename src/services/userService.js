@@ -1,7 +1,7 @@
-import UserRepository from '../repositories/userRepository.js';
-import ModuleRepository from '../repositories/moduleRepository.js';
-import PermissionRepository from '../repositories/permissionRepository.js';
-import bcrypt from 'bcrypt';
+import UserRepository from "../repositories/userRepository.js";
+import ModuleRepository from "../repositories/moduleRepository.js";
+import PermissionRepository from "../repositories/permissionRepository.js";
+import bcrypt from "bcrypt";
 class UserService {
   constructor() {
     this.userRepository = new UserRepository();
@@ -13,27 +13,34 @@ class UserService {
     const users = await this.userRepository.getAllUsersWithModules();
     const allModules = await this.moduleRepository.getAllModules();
 
-    return users.map(user => {
-      if (user.role === 'SUPERUSER' || user.role === 'ADMIN') {
+    return users.map((user) => {
+      if (user.role === "SUPERUSER" || user.role === "ADMIN") {
         return {
           ...user,
           allModules: true,
-          permissions: allModules.map(module => ({ module })),
+          permissions: allModules.map((module) => ({ module })),
         };
       }
       return user;
     });
   }
   async createUser(userData, creatorRole) {
-    const { role, password } = userData;
+    const { role, password, email } = userData;
 
+    // Verifica se o e-mail já está em uso
+    const existingUser = await this.userRepository.findUserByEmail(email);
+    if (existingUser) {
+      throw new Error("O e-mail já está em uso por outro usuário.");
+    }
     // Verifica se o criador tem permissão para criar o tipo de usuário
-    if (role === 'ADMIN' && creatorRole !== 'SUPERUSER') {
-      throw new Error('Apenas superusuários podem criar administradores.');
+    if (role === "ADMIN" && creatorRole !== "SUPERUSER") {
+      throw new Error("Apenas superusuários podem criar administradores.");
     }
 
-    if (role === 'ADMIN' && creatorRole === 'ADMIN') {
-      throw new Error('Administradores não podem criar outros administradores.');
+    if (role === "ADMIN" && creatorRole === "ADMIN") {
+      throw new Error(
+        "Administradores não podem criar outros administradores."
+      );
     }
 
     // Criptografa a senha
@@ -46,15 +53,20 @@ class UserService {
     });
 
     // Atribui permissões automáticas
-    if (role === 'ADMIN') {
+    if (role === "ADMIN") {
       const allModules = await this.moduleRepository.getAllModules();
       for (const module of allModules) {
         await this.permissionRepository.addPermission(user.id, module.id);
       }
-    } else if (role === 'USER') {
-      const profileModule = await this.moduleRepository.findModuleByName('Perfil');
+    } else if (role === "USER") {
+      const profileModule = await this.moduleRepository.findModuleByName(
+        "Perfil"
+      );
       if (profileModule) {
-        await this.permissionRepository.addPermission(user.id, profileModule.id);
+        await this.permissionRepository.addPermission(
+          user.id,
+          profileModule.id
+        );
       }
     }
 
