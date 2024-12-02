@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logs de Acesso</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-100 flex flex-col items-center justify-start py-10">
+  <div class="max-w-5xl w-full px-4">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Logs de Acesso</h1>
+    <div class="overflow-x-auto bg-white shadow-lg rounded-lg">
+      <table class="min-w-full table-auto border-collapse border border-gray-200">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border border-gray-300 px-4 py-2 text-gray-700 text-left">Usuário</th>
+            <th class="border border-gray-300 px-4 py-2 text-gray-700 text-left">E-mail</th>
+            <th class="border border-gray-300 px-4 py-2 text-gray-700 text-left">URL</th>
+            <th class="border border-gray-300 px-4 py-2 text-gray-700 text-left">Acesso Permitido</th>
+            <th class="border border-gray-300 px-4 py-2 text-gray-700 text-left">Data/Hora</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% logs.forEach(log => { %>
+            <tr class="hover:bg-gray-100">
+              <td class="border border-gray-300 px-4 py-2"><%= log.user?.name || 'Desconhecido' %></td>
+              <td class="border border-gray-300 px-4 py-2"><%= log.user?.email || 'Não autenticado' %></td>
+              <td class="border border-gray-300 px-4 py-2"><%= log.url %></td>
+              <td class="border border-gray-300 px-4 py-2"><%= log.granted ? 'Sim' : 'Não' %></td>
+              <td class="border border-gray-300 px-4 py-2"><%= log.accessTime.toISOString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

@@ -23,6 +23,13 @@ class PermissionRepository {
       },
     });
   }
+
+  async findModuleByName(name) {
+    return this.prisma.module.findUnique({
+      where: { name },
+    });
+  }
+  
 }
 
 export default PermissionRepository;
