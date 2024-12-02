@@ -8,6 +8,7 @@ import { permissionRoutes } from "./routes/permissionRoutes.js";
 import { moduleRoutes } from "./routes/moduleRoutes.js";
 import { logRoutes } from "./routes/logRoutes.js";
 import {profileRoutes} from './routes/profileRoutes.js'
+import logger from "./config/logger.js";
 import fs from 'fs';
 
 const uploadDir = path.join(path.resolve(), 'uploads');
@@ -17,6 +18,10 @@ if (!fs.existsSync(uploadDir)) {
 
 const app = express();
 
+app.use((req,res,next) => {
+  logger.info(`Request: ${req.method} ${req.url}`)
+  next()
+})
 // Configuração de sessões
 app.use(
   session({
