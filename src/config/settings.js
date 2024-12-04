@@ -1,8 +1,9 @@
 import dotenv from 'dotenv';
-dotenv.config(); // Carrega as variáveis de ambiente do .env
+dotenv.config();
 
 class Settings {
     SESSION_SECRET = process.env.SESSION_SECRET
+    PORT = process.env.PORT
 }
 
 const settings = new Settings()

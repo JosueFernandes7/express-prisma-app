@@ -11,4 +11,6 @@ router.get(
   (req, res) => homeController.viewHome(req, res)
 );
 
-export default router;
+export  {
+  router as homeRoutes
+};

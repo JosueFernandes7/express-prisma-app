@@ -13,24 +13,21 @@ class PermissionMiddleware {
 
       if (!user) {
         await this.accessLogRepository.createAccessLog(null, req.originalUrl, false);
-        return res.redirect('/auth/login'); // Redireciona para login se não autenticado
+        return res.redirect('/auth/login'); 
       }
 
-      // Superusuários e administradores têm acesso garantido
       if (user.role === 'SUPERUSER' || user.role === 'ADMIN') {
         await this.accessLogRepository.createAccessLog(user.id, req.originalUrl, true);
         return next();
       }
 
       try {
-        // Verifica se o módulo existe
         const module = await this.permissionRepository.findModuleByName(moduleName);
         if (!module) {
           await this.accessLogRepository.createAccessLog(user.id, req.originalUrl, false);
           return res.render('error', { error: `O módulo ${moduleName} não existe.` });
         }
 
-        // Verifica se o usuário tem permissão
         const hasPermission = await this.permissionRepository.findPermission(user.id, module.id);
         await this.accessLogRepository.createAccessLog(user.id, req.originalUrl, !!hasPermission);
 
@@ -38,7 +35,7 @@ class PermissionMiddleware {
           return res.render('error', { error: `Você não tem permissão para acessar o módulo ${moduleName}.` });
         }
 
-        next(); // Permissão concedida
+        next(); 
       } catch (err) {
         
         await this.accessLogRepository.createAccessLog(user.id, req.originalUrl, false);

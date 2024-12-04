@@ -3,7 +3,6 @@ import multer from '../config/multerConfig.js';
 import SessionMiddleware from '../middlewares/sessionMiddleware.js';
 import ProfileController from '../controllers/profileController.js';
 import PermissionMiddleware from '../middlewares/permissionMiddleware.js';
-
 const router = express.Router();
 const profileController = new ProfileController();
 

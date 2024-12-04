@@ -5,13 +5,6 @@ class AccessLogRepository {
     this.prisma = new PrismaClient();
   }
 
-  /**
-   * Creates a new access log entry.
-   * @param {number|null} userId - ID of the user attempting access (null for unauthenticated).
-   * @param {string} url - URL the user attempted to access.
-   * @param {boolean} granted - Whether the access was granted.
-   * @returns {Promise<Object>} The created access log object.
-   */
   async createAccessLog(userId, url, granted) {
     return this.prisma.accessLog.create({
       data: {
