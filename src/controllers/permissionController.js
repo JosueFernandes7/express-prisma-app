@@ -1,15 +1,16 @@
 import PermissionRepository from "../repositories/permissionRepository.js";
 import UserRepository from "../repositories/userRepository.js";
-
+import ModuleRepository from "../repositories/moduleRepository.js";
 class PermissionController {
   constructor() {
     this.permissionRepository = new PermissionRepository();
+    this.moduleRepository = new ModuleRepository();
     this.userRepository = new UserRepository();
   }
 
   async renderManagePermissions(req, res) {
     try {
-      const modules = await this.permissionRepository.getAllModules();
+      const modules = await this.moduleRepository.getAllModules();
       const users = await this.userRepository.getAllUsers();
       res.render("managePermissions", { modules, users, error: null });
     } catch (err) {

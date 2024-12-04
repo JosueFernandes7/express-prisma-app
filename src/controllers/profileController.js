@@ -21,7 +21,6 @@ class ProfileController {
   async updateProfile(req, res) {
     const { name, email } = req.body;
     const image = req.file ? req.file.filename : null;
-    console.log("IMAGEM QUE CHEGOU", image);
     
     try {
       const updateData = { name, email };
