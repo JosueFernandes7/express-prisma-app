@@ -1,26 +1,29 @@
-import UserService from '../services/userService.js';
-import ModuleService from '../services/moduleService.js';
+import UserRepository from "../repositories/userRepository.js";
+import ModuleRepository from "../repositories/moduleRepository.js";
 
 class HomeController {
   constructor() {
-    this.userService = new UserService();
-    this.moduleService = new ModuleService();
+    this.userRepository = new UserRepository();
+    this.moduleRepository = new ModuleRepository()
   }
 
   async viewHome(req, res) {
     try {
       const userId = req.session.user.id;
       const role = req.session.user.role;
-
-      // Busca todos os usuários com suas permissões
-      const users = await this.userService.getAllUsersWithModules();
-
-      // Busca módulos acessíveis ao usuário logado
-      const modules = await this.moduleService.getAccessibleModules(userId, role);
       
-      res.render('home', { user: req.session.user, users, modules });
+      const users = await this.userRepository.getAllUsersWithModules();
+
+      let modules;
+      if (role === "SUPERUSER" || role === "ADMIN") {
+        modules = await this.moduleRepository.getAllModules();
+      } else {
+        modules = await this.moduleRepository.getModulesByUserId(userId);
+      }
+
+      res.render("home", { user: req.session.user, users, modules });
     } catch (err) {
-      res.render('error', { error: 'Erro ao carregar a página inicial: ' + err.message });
+      res.render("error", { error: "Erro ao carregar a página inicial. Por favor, tente novamente." });
     }
   }
 }
