@@ -1,44 +1,44 @@
-import ProfileService from "../services/profileService.js";
+import UserRepository from "../repositories/userRepository.js";
 
 class ProfileController {
   constructor() {
-    this.profileService = new ProfileService();
+    this.userRepository = new UserRepository();
   }
 
   async viewProfile(req, res) {
     try {
-      const user = await this.profileService.getUserProfile(
-        req.session.user.id
-      );
+      const user = await this.userRepository.findUserById(req.session.user.id);
+      if (!user) {
+        throw new Error("Usuário não encontrado.");
+      }
       res.render("profile", { user, error: null });
     } catch (err) {
-      res.render("error", {
-        error: "Erro ao carregar o perfil: " + err.message,
-      });
+      console.error("Erro ao carregar o perfil:", err.message);
+      res.render("error", { error: "Erro ao carregar o perfil: " + err.message });
     }
   }
 
   async updateProfile(req, res) {
-    console.log("aqui");
-    
     const { name, email } = req.body;
     const image = req.file ? req.file.filename : null;
-
+    console.log("IMAGEM QUE CHEGOU", image);
+    
     try {
-      await this.profileService.updateUserProfile(req.session.user.id, {
-        name,
-        email,
-        image,
-      });
-      // Resposta de sucesso
+      const updateData = { name, email };
+      
+      updateData.image = image;
+
+      const updatedUser = await this.userRepository.updateUserById(req.session.user.id, updateData);
+      if (!updatedUser) {
+        throw new Error("Não foi possível atualizar o perfil.");
+      }
+
       res.json({
         status: "success",
         message: "Perfil atualizado com sucesso.",
       });
     } catch (err) {
-      console.log(err.message);
-      
-      // Resposta de erro
+      console.error("Erro ao atualizar o perfil:", err.message);
       res.json({
         status: "failed",
         message: "Erro ao atualizar o perfil: " + err.message,
