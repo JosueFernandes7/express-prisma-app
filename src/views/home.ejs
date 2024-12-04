@@ -74,7 +74,7 @@
       <% modules.forEach(module => { %>
         <li>
           <% if (module.name !== "Perfil") { %>
-            <a href="/modules/<%= module.name.toLowerCase() %>" class="text-blue-500 hover:text-blue-600">
+            <a href="/<%= module.name.toLowerCase() %>" class="text-blue-500 hover:text-blue-600">
               <%= module.name %>
             </a>
           <% } %>

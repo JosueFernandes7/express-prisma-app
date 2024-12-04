@@ -17,7 +17,6 @@ class HomeController {
 
       // Busca módulos acessíveis ao usuário logado
       const modules = await this.moduleService.getAccessibleModules(userId, role);
-      console.log({ user: req.session.user, users, modules });
       
       res.render('home', { user: req.session.user, users, modules });
     } catch (err) {

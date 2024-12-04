@@ -5,11 +5,15 @@ import homeRoutes from "./routes/homeRoutes.js";
 import { authRoutes } from "./routes/authRoutes.js";
 import { userRoutes } from "./routes/userRoutes.js";
 import { permissionRoutes } from "./routes/permissionRoutes.js";
-import { moduleRoutes } from "./routes/moduleRoutes.js";
+// import { moduleRoutes } from "./routes/moduleRoutes.js";
 import { logRoutes } from "./routes/logRoutes.js";
 import { profileRoutes } from "./routes/profileRoutes.js";
+import { financeiroRoutes } from "./routes/financeiroRoutes.js";
+import { relatorioRoutes } from "./routes/relatorioRoutes.js";
+import { gestaoRoutes } from "./routes/gestaoRoutes.js";
+import { produtosRoutes } from "./routes/produtosRoutes.js";
 import { settings } from "./config/settings.js";
-import logger from "./config/logger.js";
+// import logger from "./config/logger.js";
 import fs from "fs";
 
 const uploadDir = path.join(path.resolve(), "uploads");
@@ -19,10 +23,10 @@ if (!fs.existsSync(uploadDir)) {
 
 const app = express();
 
-app.use((req, res, next) => {
-  logger.info(`Request: ${req.method} ${req.url}`);
-  next();
-});
+// app.use((req, res, next) => {
+//   logger.info(`Request: ${req.method} ${req.url}`);
+//   next();
+// });
 
 // Session Config
 app.use(
@@ -51,9 +55,15 @@ app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/permissions", permissionRoutes);
-app.use("/modules", moduleRoutes);
+
+// Modules 
+// app.use("/modules", moduleRoutes);
+app.use("/financeiro", financeiroRoutes);
+app.use("/relatorios", relatorioRoutes);
+app.use("/gestao", gestaoRoutes);
 app.use("/logs", logRoutes);
 app.use("/profile", profileRoutes);
+app.use("/produtos", produtosRoutes);
 
 // Middleware for not found routes
 app.use((req, res, next) => {

@@ -1,47 +1,47 @@
-import express from 'express';
-import SessionMiddleware from '../middlewares/sessionMiddleware.js';
-import PermissionMiddleware from '../middlewares/permissionMiddleware.js';
+// import express from 'express';
+// import SessionMiddleware from '../middlewares/sessionMiddleware.js';
+// import PermissionMiddleware from '../middlewares/permissionMiddleware.js';
 
-const router = express.Router();
+// const router = express.Router();
 
-router.get(
-  '/financeiro',
-  SessionMiddleware.ensureAuthenticated,
-  PermissionMiddleware.ensurePermission('Financeiro'),
-  (req, res) => {
-    res.render('module', { title: 'Módulo Financeiro' });
-  }
-);
+// router.get(
+//   '/financeiro',
+//   SessionMiddleware.ensureAuthenticated,
+//   PermissionMiddleware.ensurePermission('Financeiro'),
+//   (req, res) => {
+//     res.render('module', { title: 'Módulo Financeiro' });
+//   }
+// );
 
-router.get(
-  '/relatorios',
-  SessionMiddleware.ensureAuthenticated,
-  PermissionMiddleware.ensurePermission('Relatorios'),
-  (req, res) => {
-    res.render('module', { title: 'Módulo Relatórios' });
-  }
-);
+// router.get(
+//   '/relatorios',
+//   SessionMiddleware.ensureAuthenticated,
+//   PermissionMiddleware.ensurePermission('Relatorios'),
+//   (req, res) => {
+//     res.render('module', { title: 'Módulo Relatórios' });
+//   }
+// );
 
-router.get(
-  '/produtos',
-  SessionMiddleware.ensureAuthenticated,
-  PermissionMiddleware.ensurePermission('Produtos'),
-  (req, res) => {
-    res.render('module', { title: 'Módulo Produtos' });
-  }
-);
+// router.get(
+//   '/produtos',
+//   SessionMiddleware.ensureAuthenticated,
+//   PermissionMiddleware.ensurePermission('Produtos'),
+//   (req, res) => {
+//     res.render('module', { title: 'Módulo Produtos' });
+//   }
+// );
 
-router.get(
-  '/gestao',
-  SessionMiddleware.ensureAuthenticated,
-  PermissionMiddleware.ensurePermission('Gestao'),
-  (req, res) => {
-    console.log("AQUI");
+// router.get(
+//   '/gestao',
+//   SessionMiddleware.ensureAuthenticated,
+//   PermissionMiddleware.ensurePermission('Gestao'),
+//   (req, res) => {
+//     console.log("AQUI");
     
-    res.render('module', { title: 'Módulo Gestão de Usuários' });
-  }
-);
+//     res.render('module', { title: 'Módulo Gestão de Usuários' });
+//   }
+// );
 
-export {
-    router as moduleRoutes
-};
+// export {
+//     router as moduleRoutes
+// };

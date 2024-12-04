@@ -10,15 +10,24 @@ class UserRepository {
       where: { email },
     });
   }
-  async createUser(userData) {
-    return this.prisma.user.create({ data: userData });
+
+  async createUser(user) {
+    return this.prisma.user.create({
+      data: {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        role: user.role,
+      },
+    });
   }
+
   async getAllUsers() {
     return this.prisma.user.findMany({
       select: { id: true, name: true, email: true, role: true },
       where: {
-        role: 'USER'
-      }
+        role: 'USER',
+      },
     });
   }
 
@@ -33,7 +42,7 @@ class UserRepository {
       },
     });
   }
-  
+
   async findUserById(userId) {
     return this.prisma.user.findUnique({
       where: { id: userId },
@@ -57,8 +66,6 @@ class UserRepository {
       data: updateData,
     });
   }
-  
-
 }
 
 export default UserRepository;
