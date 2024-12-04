@@ -1,35 +1,47 @@
-import AuthService from "../services/authService.js";
+import bcrypt from "bcrypt";
+import UserRepository from "../repositories/userRepository.js";
 
 class AuthController {
   constructor() {
-    this.authService = new AuthService();
+    this.userRepository = new UserRepository();
   }
 
   renderLogin(req, res) {
-    res.render('login', { error: null });
+    res.render("login", { error: null });
   }
 
   async processLogin(req, res) {
     const { email, password } = req.body;
 
-    const user = await this.authService.validateUser(email, password);
+    try {
+      const user = await this.userRepository.findUserByEmail(email);
 
-    if (!user) {
-      return res.render('login', { error: 'E-mail ou senha inválidos' });
+      if (!user || !(await bcrypt.compare(password, user.password))) {
+        return res.render("login", { error: "E-mail ou senha inválidos" });
+      }
+
+      req.session.user = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      };
+
+      console.log("USUÁRIO LOGADO:", req.session.user);
+      res.redirect("/");
+    } catch (err) {
+      console.error("Erro durante o login:", err.message);
+      res.render("error", { error: "Erro ao processar o login." });
     }
-    req.session.user = user;
-    console.log("USUÁRIO LOGADO");
-    console.log(req.session.user);
-    
-    res.redirect('/'); 
   }
 
   logout(req, res) {
     req.session.destroy((err) => {
       if (err) {
-        return res.status(500).send('Erro ao encerrar a sessão.');
+        console.error("Erro ao encerrar sessão:", err.message);
+        return res.status(500).send("Erro ao encerrar a sessão.");
       }
-      res.redirect('/auth/login');
+      res.redirect("/auth/login");
     });
   }
 }
